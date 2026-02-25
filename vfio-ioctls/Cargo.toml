@@ -36,5 +36,12 @@ mshv-bindings = { version = "0.6.5", features = [
   "fam-wrappers",
 ], optional = true }
 mshv-ioctls = { version = "0.6.5", optional = true }
-iommufd-bindings = { git = "https://github.com/likebreath/iommufd", branch = "0129/rfc_viommu_vdevice", optional = true }
-iommufd-ioctls = { git = "https://github.com/likebreath/iommufd", branch = "0129/rfc_viommu_vdevice", optional = true }
+# For local development:
+iommufd-bindings = { path = "../../iommufd/iommufd-bindings", optional = true }
+iommufd-ioctls = { path = "../../iommufd/iommufd-ioctls", optional = true }
+# With CMDQV support (your fork):
+# iommufd-bindings = { git = "https://github.com/rksaripalli/iommufd", branch = "cmdqv-support", optional = true }
+# iommufd-ioctls = { git = "https://github.com/rksaripalli/iommufd", branch = "cmdqv-support", optional = true }
+# Original upstream:
+# iommufd-bindings = { git = "https://github.com/likebreath/iommufd", branch = "0129/rfc_viommu_vdevice", optional = true }
+# iommufd-ioctls = { git = "https://github.com/likebreath/iommufd", branch = "0129/rfc_viommu_vdevice", optional = true }
