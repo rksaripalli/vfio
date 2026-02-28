@@ -1295,21 +1295,33 @@ impl VfioDevice {
         vdevice: &mut IommufdVDevice,
         hwpt_data: &IommufdHwptData,
     ) -> Result<()> {
+        eprintln!("DEBUG: install_s1_hwpt: starting for device {:?}", self.sysfspath);
+
         // Uninstall existing s1 hwpt if exists
+        eprintln!("DEBUG: install_s1_hwpt: uninstalling existing s1_hwpt (abort mode)");
         self.uninstall_s1_hwpt(vdevice, true)?;
+        eprintln!("DEBUG: install_s1_hwpt: existing s1_hwpt uninstalled");
 
         // Create s1 hwpt based on the input data
+        eprintln!("DEBUG: install_s1_hwpt: allocating new s1_hwpt");
         let s1_hwpt_id = vdevice
             .allocate_s1_hwpt(hwpt_data)
             .map_err(VfioError::IommufdS1HwptAlloc)?;
+        eprintln!("DEBUG: install_s1_hwpt: s1_hwpt allocated with id={}", s1_hwpt_id);
 
         // Attach the vfio device to the newly created s1 hwpt
+        eprintln!("DEBUG: install_s1_hwpt: attaching device to s1_hwpt_id={}", s1_hwpt_id);
         let mut attach_data = vfio_device_attach_iommufd_pt {
             argsz: mem::size_of::<vfio_device_attach_iommufd_pt>() as u32,
             flags: 0,
             pt_id: s1_hwpt_id,
         };
-        vfio_syscall::attach_device_iommufd_pt(&self.device, &mut attach_data)?;
+        let attach_result = vfio_syscall::attach_device_iommufd_pt(&self.device, &mut attach_data);
+        match &attach_result {
+            Ok(()) => eprintln!("DEBUG: install_s1_hwpt: device attached successfully"),
+            Err(e) => eprintln!("DEBUG: install_s1_hwpt: attach failed: {:?}", e),
+        }
+        attach_result?;
 
         Ok(())
     }
